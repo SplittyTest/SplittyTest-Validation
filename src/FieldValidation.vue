@@ -5,10 +5,10 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, nextTick, type PropType } from 'vue';
-import { Validator } from './ValidatorClass';
-import { isEqual, isPlainObject, remove } from 'lodash-es';
-import type { ValidationRule } from './FieldValidatorClass';
+import { defineComponent, nextTick, ref, type PropType } from 'vue';
+import { type FormValidator } from './FormValidator';
+import { isUndefined, remove } from 'lodash-es';
+import type { ValidationRule } from './FieldValidator';
 
 export default defineComponent({
 	name: 'FieldValidation',
@@ -24,6 +24,9 @@ export default defineComponent({
 		modelModifiers: {
 			default: () => ({}),
 		},
+		replaceRules: {
+			type: Boolean,
+		},
 		rules: {
 			type: Array as PropType<ValidationRule[]>,
 			default() {
@@ -31,7 +34,7 @@ export default defineComponent({
 			},
 		},
 		validator: {
-			type: Validator,
+			type: Object as PropType<FormValidator>,
 			required: true,
 		},
 	},
@@ -53,34 +56,22 @@ export default defineComponent({
 	},
 	watch: {
 		modelValue: {
-			async handler(new_value: any, old_value: any) {
-				if (!isEqual(new_value, old_value)) {
-					if (this.field) {
-						this.field.value = new_value;
-						this.field.dirty = true;
-					}
-					this.validator.dirty = true;
-					if (this.field.group) {
-						this.validator.groups[this.field.group]!.dirty = true;
-					}
-					if (this.field.touched) {
-						await this.field.validate();
-					}
-				}
+			async handler(new_value) {
+				this.field.setValue(new_value);
 			},
-			deep: true,
+			immediate: true,
 		},
 	},
 	mounted() {
 		// Add the field to the validator
-		if (!this.field) {
-			let group;
-			if (Object.keys(this.modelModifiers).length === 1) {
-				group = Object.keys(this.modelModifiers)[0];
-			}
-			this.validator.addField(this.name, {
-				value: this.modelValue,
-				rules: this.rules,
+		let group;
+		if (Object.keys(this.modelModifiers).length === 1) {
+			group = Object.keys(this.modelModifiers)[0];
+		}
+
+		if (!isUndefined(this.modelValue)) {
+			this.validator.addField(this.name, ref(this.modelValue), this.rules || [], {
+				replace_rules: this.replaceRules || false,
 				group,
 			});
 		}
@@ -95,12 +86,12 @@ export default defineComponent({
 					this.validator.fields[this.name]?.controls.push(form_field);
 					form_field.addEventListener('blur', (event: FocusEvent) => {
 						if (!root.contains(event.relatedTarget as Node)) {
-							this.validator.touched = true;
+							this.validator.setTouched();
 							if (this.validator.fields[this.name]!.group) {
 								const group_name = this.validator.fields[this.name]!.group;
-								this.validator.groups[group_name as string]!.touched = true;
+								this.validator.groups[group_name as string]!.setTouched();
 							}
-							this.validator.fields[this.name]!.touched = true;
+							this.validator.fields[this.name]!.setTouched();
 							this.validator.fields[this.name]!.validate();
 						}
 					});
