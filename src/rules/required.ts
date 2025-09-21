@@ -6,8 +6,8 @@ export interface RequiredRuleOptions {
 	min?: number;
 }
 
-export default function (message: string, options?: RequiredRuleOptions) {
-	options = merge(
+export default function (message: string, options: RequiredRuleOptions = {}) {
+	const merged_options = merge(
 		{
 			min: 1,
 			max: Infinity,
@@ -24,12 +24,12 @@ export default function (message: string, options?: RequiredRuleOptions) {
 				}
 				break;
 			case 'number':
-				if (value >= (options.min || -Infinity) && value <= (options.max || Infinity)) {
+				if (value >= merged_options.min && value <= merged_options.max) {
 					valid = true;
 				}
 				break;
 			case 'boolean':
-				if (options.allow_false) {
+				if (merged_options.allow_false) {
 					if (!isUndefined(value) && !isNull(value)) {
 						valid = true;
 					}
