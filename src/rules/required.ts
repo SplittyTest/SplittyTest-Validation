@@ -1,12 +1,12 @@
 import { isEmpty, isNull, isUndefined, merge } from 'lodash-es';
 
 export interface RequiredRuleOptions {
-	allow_false: boolean;
-	max: number;
-	min: number;
+	allow_false?: boolean;
+	max?: number;
+	min?: number;
 }
 
-export default function (message: string, options: RequiredRuleOptions) {
+export default function (message: string, options?: RequiredRuleOptions) {
 	options = merge(
 		{
 			min: 1,
