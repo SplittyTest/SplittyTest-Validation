@@ -24,7 +24,7 @@ export default function (message: string, options?: RequiredRuleOptions) {
 				}
 				break;
 			case 'number':
-				if (value >= options.min && value <= options.max) {
+				if (value >= (options.min || -Infinity) && value <= (options.max || Infinity)) {
 					valid = true;
 				}
 				break;
