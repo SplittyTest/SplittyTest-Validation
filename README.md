@@ -108,6 +108,6 @@ export {
 Then in the template:
 
 ```html
-<FieldValidation name="pity" v-model="who_do_i_pity" :validator="myValidator" :rules="myCustomRule">...</FieldVaidation>
-<FieldValidation name="age" v-model="age" :validator="myValidator" :rules="myCustomRuleWithArguments(18, 50)">...</FieldVaidation>
+<FieldValidation name="pity" v-model="who_do_i_pity" :validator="myValidator" :rules="[myCustomRule]">...</FieldVaidation>
+<FieldValidation name="age" v-model="age" :validator="myValidator" :rules="[myCustomRuleWithArguments(18, 50)]">...</FieldVaidation>
 ```
