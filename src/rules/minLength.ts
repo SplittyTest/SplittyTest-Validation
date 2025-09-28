@@ -1,4 +1,4 @@
-export default function (min_length: number, message: string) {
+export default function (min_length: number, message?: string) {
 	return function (value: any) {
 		if (typeof value !== 'undefined' && value.trim().length >= min_length) {
 			return null;

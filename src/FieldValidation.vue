@@ -57,7 +57,7 @@ export default defineComponent({
 	watch: {
 		modelValue: {
 			async handler(new_value) {
-				this.field.setValue(new_value);
+				this.field?.setValue(new_value);
 			},
 			immediate: true,
 		},

@@ -6,13 +6,13 @@ export interface RequiredRuleOptions {
 	min?: number;
 }
 
-export default function (message: string, options: RequiredRuleOptions = {}) {
+export default function (message?: string, options?: RequiredRuleOptions) {
 	const merged_options = merge(
 		{
 			min: 1,
 			max: Infinity,
 		},
-		options,
+		options || {},
 	);
 
 	return function (value: any) {

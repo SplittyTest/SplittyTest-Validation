@@ -1,4 +1,4 @@
-export default function (max_value: number, message: string) {
+export default function (max_value: number, message?: string) {
 	return function (value: any) {
 		if (typeof value !== 'undefined' && value <= max_value) {
 			return null;

@@ -1,4 +1,4 @@
-export default function (min_value: number, message: string) {
+export default function (min_value: number, message?: string) {
 	return function (value: any) {
 		if (typeof value !== 'undefined' && value >= min_value) {
 			return null;
