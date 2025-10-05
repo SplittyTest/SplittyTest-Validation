@@ -7,7 +7,7 @@
 <script lang="ts">
 import { defineComponent, nextTick, ref, type PropType } from 'vue';
 import { type FormValidator } from './FormValidator';
-import { isUndefined, remove } from 'lodash-es';
+import { isEqual, isUndefined, remove } from 'lodash-es';
 import type { ValidationRule } from './FieldValidator';
 
 export default defineComponent({
@@ -15,7 +15,7 @@ export default defineComponent({
 	props: {
 		el: {
 			type: String,
-			default: 'input, select, textarea',
+			default: 'button, input, select, textarea',
 		},
 		name: {
 			type: String,
@@ -41,6 +41,10 @@ export default defineComponent({
 			type: Object as PropType<FormValidator>,
 			required: true,
 		},
+		watchValue: {
+			type: Boolean,
+			default: false,
+		},
 	},
 	data() {
 		return {
@@ -60,9 +64,13 @@ export default defineComponent({
 	},
 	watch: {
 		modelValue: {
-			async handler(new_value) {
+			handler(new_value) {
+				if (this.watchValue) {
+					this.field?.setTouched();
+				}
 				this.field?.setValue(new_value);
 			},
+			deep: true,
 			immediate: true,
 		},
 	},

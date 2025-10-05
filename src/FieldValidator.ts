@@ -101,10 +101,11 @@ export function useFieldValidator(
 		// Only validate if the controls are not disabled or hidden
 		let should_validate = false;
 		if (
-			controls.length > 0 &&
-			controls?.every((control_element) => {
-				return !control_element.getAttribute('disabled');
-			})
+			controls.length === 0 ||
+			(controls.length > 0 &&
+				controls?.every((control_element) => {
+					return !control_element.getAttribute('disabled');
+				}))
 		) {
 			should_validate = true;
 		}
