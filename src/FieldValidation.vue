@@ -13,6 +13,10 @@ import type { ValidationRule } from './FieldValidator';
 export default defineComponent({
 	name: 'FieldValidation',
 	props: {
+		el: {
+			type: String,
+			default: 'input, select, textarea',
+		},
 		name: {
 			type: String,
 			required: true,
@@ -79,7 +83,7 @@ export default defineComponent({
 		nextTick(() => {
 			// Add control elements to the validation methods
 			const root = this.$refs.root as HTMLElement;
-			const form_fields = root.querySelectorAll<HTMLElement>('input, select, textarea');
+			const form_fields = root.querySelectorAll<HTMLElement>(this.el);
 			this.form_fields = Array.from(form_fields);
 			this.form_fields.forEach((form_field) => {
 				if (form_field.getAttribute('has-validation') !== 'true') {
