@@ -49,12 +49,12 @@ In the template:
 <template>
     <div class='login-form'>
         <div class='email-field'>
-            <FieldValidation name="email" v-model="email" :validator="login_form_validator" :rules="[rules.required, rules.email]">
+            <FieldValidation name="email" :value="email" :validator="login_form_validator" :rules="[rules.required, rules.email]">
                 <input name="email" v-model="email">
             </FieldValidation>
         </div>
         <div class='password-field'>
-            <FieldValidation name="password" v-model="password" :validator="login_form_validator" :rules="[rules.required]">
+            <FieldValidation name="password" :value="password" :validator="login_form_validator" :rules="[rules.required]">
                 <input name="password" v-model="password">
             </FieldValidation>
         </div>
@@ -68,9 +68,11 @@ In the template:
 ### FieldValidation Component Properties
 
 - **name (String) - Required:** A unique name for the field that is used intenally to reference the field being validated.
-- **v-model (any) - Required:** The value that is being validated.
+- **:value (any) - Required:** The value that is being validated.
+- **group (String):** A group name for validating subsets of fields.
 - **validator (FormValidator) - Required:** The instance of the FormValidator that the field is attached to.
 - **rules (Rule[]): - Conditionally Required** Rules are a list of functions used to validated the value in the v-model. It is only required on the FieldValidation component if they weren't defined when creating the FormValidator.
+- **el (String):** The HTML element in the slot that you want validation triggers applied to. The string should be a selector. For instance, if you want to use a PrimeVue `Select` component inside the validator, you should set `el=".p-select-label"`
 
 ### Making Custom Rules
 
@@ -108,6 +110,6 @@ export {
 Then in the template:
 
 ```html
-<FieldValidation name="pity" v-model="who_do_i_pity" :validator="myValidator" :rules="[myCustomRule]">...</FieldVaidation>
-<FieldValidation name="age" v-model="age" :validator="myValidator" :rules="[myCustomRuleWithArguments(18, 50)]">...</FieldVaidation>
+<FieldValidation name="pity" :value="who_do_i_pity" :validator="myValidator" :rules="[myCustomRule]">...</FieldVaidation>
+<FieldValidation name="age" :value="age" :validator="myValidator" :rules="[myCustomRuleWithArguments(18, 50)]">...</FieldVaidation>
 ```
