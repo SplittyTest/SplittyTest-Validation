@@ -7,7 +7,7 @@
 <script lang="ts">
 import { defineComponent, nextTick, ref, type PropType } from 'vue';
 import { type FormValidator } from './FormValidator';
-import { isEqual, isUndefined, remove } from 'lodash-es';
+import { isUndefined, remove } from 'lodash-es';
 import type { ValidationRule } from './FieldValidator';
 
 export default defineComponent({
@@ -17,16 +17,11 @@ export default defineComponent({
 			type: String,
 			default: 'button, input, select, textarea',
 		},
+		group: String,
+		hideError: Boolean,
 		name: {
 			type: String,
 			required: true,
-		},
-		hideError: Boolean,
-		modelValue: {
-			type: null,
-		},
-		modelModifiers: {
-			default: () => ({}),
 		},
 		replaceRules: {
 			type: Boolean,
@@ -40,6 +35,9 @@ export default defineComponent({
 		validator: {
 			type: Object as PropType<FormValidator>,
 			required: true,
+		},
+		value: {
+			type: null,
 		},
 		watchValue: {
 			type: Boolean,
@@ -63,7 +61,7 @@ export default defineComponent({
 		},
 	},
 	watch: {
-		modelValue: {
+		value: {
 			handler(new_value) {
 				if (this.watchValue) {
 					this.field?.setTouched();
@@ -76,13 +74,10 @@ export default defineComponent({
 	},
 	mounted() {
 		// Add the field to the validator
-		let group;
-		if (Object.keys(this.modelModifiers).length === 1) {
-			group = Object.keys(this.modelModifiers)[0];
-		}
+		let group = this.group;
 
-		if (!isUndefined(this.modelValue)) {
-			this.validator.addField(this.name, ref(this.modelValue), this.rules || [], {
+		if (!isUndefined(this.value)) {
+			this.validator.addField(this.name, ref(this.value), this.rules || [], {
 				replace_rules: this.replaceRules || false,
 				group,
 			});
