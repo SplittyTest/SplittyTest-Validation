@@ -72,6 +72,23 @@ export default defineComponent({
 			immediate: true,
 		},
 	},
+	methods: {
+		validate(event: FocusEvent) {
+			const root = this.$refs.root as HTMLElement;
+			if (!root.contains(event.relatedTarget as Node)) {
+				this.validator.setTouched();
+				if (this.validator.fields.hasOwnProperty(this.name)) {
+					const field = this.validator.fields[this.name]!;
+					if (field.group) {
+						const group_name = field.group;
+						this.validator.groups[group_name as string]?.setTouched();
+					}
+					field.setTouched();
+					field.validate();
+				}
+			}
+		},
+	},
 	mounted() {
 		// Add the field to the validator
 		let group = this.group;
@@ -91,17 +108,7 @@ export default defineComponent({
 			this.form_fields.forEach((form_field) => {
 				if (form_field.getAttribute('has-validation') !== 'true') {
 					this.validator.fields[this.name]?.controls.push(form_field);
-					form_field.addEventListener('blur', (event: FocusEvent) => {
-						if (!root.contains(event.relatedTarget as Node)) {
-							this.validator.setTouched();
-							if (this.validator.fields[this.name]!.group) {
-								const group_name = this.validator.fields[this.name]!.group;
-								this.validator.groups[group_name as string]!.setTouched();
-							}
-							this.validator.fields[this.name]!.setTouched();
-							this.validator.fields[this.name]!.validate();
-						}
-					});
+					form_field.addEventListener('blur', this.validate);
 					form_field.setAttribute('has-validation', 'true');
 				}
 			});
@@ -109,7 +116,13 @@ export default defineComponent({
 	},
 	beforeUnmount() {
 		this.form_fields.forEach((form_field) => {
-			remove(this.validator.fields[this.name]!.controls, form_field);
+			if (form_field.getAttribute('has-validation') === 'true') {
+				form_field.removeEventListener('blur', this.validate);
+				form_field.removeAttribute('has-validation');
+			}
+			if (this.validator?.fields[this.name]?.controls?.includes(form_field)) {
+				remove(this.validator?.fields[this.name]!.controls, form_field);
+			}
 		});
 	},
 });
